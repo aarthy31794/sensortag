@@ -15,9 +15,10 @@ var app;
 app.controller('mainController', function ($scope, $mdToast) {
 
     $scope.sensortag = sensortag;
+    $scope.graph = "Line Chart";
 
-    // ---------- Graph Code START -----------
-    $scope.options = {
+    // ---------- Line Graph Code START -----------
+    $scope.lineGraphoptions = {
         chart: {
             type: 'lineChart',
             height: 250,
@@ -37,21 +38,25 @@ app.controller('mainController', function ($scope, $mdToast) {
                 }
             },
             xAxis: {
+                axisLabel:'Time',
                 tickFormat: function(d){
-                   return $scope.sensortag.humidityData.date;
+                    if($scope.baroData[0].values[d]){
+                    var label = $scope.baroData[0].values[d].label;
+                        return label;
+                    }
                 }
             }
         }
     };
 
-    $scope.amdTempOptions = angular.copy($scope.options);
-    $scope.objTempOptions = angular.copy($scope.options);
-    $scope.accelOptions = angular.copy($scope.options);
-    $scope.gyroOptions = angular.copy($scope.options);
-    $scope.magnetoOptions = angular.copy($scope.options);
-    $scope.baroOptions = angular.copy($scope.options);
-    $scope.humidityOptions = angular.copy($scope.options);
-    $scope.lightOptions = angular.copy($scope.options);
+    $scope.amdTempOptions = angular.copy($scope.lineGraphoptions);
+    $scope.objTempOptions = angular.copy($scope.lineGraphoptions);
+    $scope.accelOptions = angular.copy($scope.lineGraphoptions);
+    $scope.gyroOptions = angular.copy($scope.lineGraphoptions);
+    $scope.magnetoOptions = angular.copy($scope.lineGraphoptions);
+    $scope.baroOptions = angular.copy($scope.lineGraphoptions);
+    $scope.humidityOptions = angular.copy($scope.lineGraphoptions);
+    $scope.lightOptions = angular.copy($scope.lineGraphoptions);
 
     $scope.amdTempData = [{ values: [], key: 'Ambient Temperature' }];
     $scope.objTempdata = [{ values: [], key: 'Object Temperature' }];
@@ -73,14 +78,16 @@ app.controller('mainController', function ($scope, $mdToast) {
         if(!isNaN($scope.sensortag.ambTempData.timeNum) && !isNaN($scope.sensortag.ambTempData.temp)){
             $scope.amdTempData[0].values.push(
                 { x: $scope.sensortag.ambTempData.timeNum,
-                  y: $scope.sensortag.ambTempData.temp});
+                  y: $scope.sensortag.ambTempData.temp,
+                  label: $scope.sensortag.ambTempData.date});
         }
         if ($scope.amdTempData[0].values.length > 100) $scope.amdTempData[0].values.shift();
 
         if(!isNaN($scope.sensortag.objTempData.timeNum) && !isNaN($scope.sensortag.objTempData.temp))
         $scope.objTempdata[0].values.push(
             { x: $scope.sensortag.objTempData.timeNum,
-              y: $scope.sensortag.objTempData.temp});
+              y: $scope.sensortag.objTempData.temp,
+              label: $scope.sensortag.objTempData.date});
         if ($scope.objTempdata[0].values.length > 100) $scope.objTempdata[0].values.shift();
 
         if(!isNaN($scope.sensortag.accelData.timeNum)){
@@ -131,27 +138,105 @@ app.controller('mainController', function ($scope, $mdToast) {
         if(!isNaN($scope.sensortag.baroData.timeNum) && !isNaN($scope.sensortag.baroData.temp)){
             $scope.baroData[0].values.push(
                 { x: $scope.sensortag.baroData.timeNum,
-                  y: $scope.sensortag.baroData.temp});
+                  y: $scope.sensortag.baroData.temp,
+                  label: $scope.sensortag.baroData.date});
         }
         if ($scope.baroData[0].values.length > 100) $scope.baroData[0].values.shift();
 
         if(!isNaN($scope.sensortag.humidityData.timeNum) && !isNaN($scope.sensortag.humidityData.temp)){
             $scope.humidityData[0].values.push(
                 { x: $scope.sensortag.humidityData.timeNum,
-                  y: $scope.sensortag.humidityData.temp});
+                  y: $scope.sensortag.humidityData.temp,
+                  label: $scope.sensortag.humidityData.date});
         }
         if ($scope.humidityData[0].values.length > 100) $scope.humidityData[0].values.shift();
 
         if(!isNaN($scope.sensortag.lightData.timeNum) && !isNaN($scope.sensortag.lightData.temp)){
             $scope.lightData[0].values.push(
                 { x: $scope.sensortag.lightData.timeNum,
-                  y: $scope.sensortag.lightData.temp});
+                  y: $scope.sensortag.lightData.temp,
+                  label: $scope.sensortag.lightData.date});
         }
         if ($scope.lightData[0].values.length > 100) $scope.lightData[0].values.shift();
 
         x++;
     }, 1000);
-    // ---------- Graph Code END -----------
+    // ---------- Line Graph Code END -----------
+
+    // ---------- Pie Chart Code Start ----------
+    $scope.pieOptions = {
+            chart: {
+                type: 'pieChart',
+                height: 300,
+                donut: true,
+                x: function(d){return d.key;},
+                y: function(d){return d.y;},
+                showLabels: true,
+
+                pie: {
+                    startAngle: function(d) { return d.startAngle/2 - Math.PI/2 },
+                    endAngle: function(d) { return d.endAngle/2 - Math.PI/2 }
+                },
+                duration: 0,
+                legend: {
+                    margin: {
+                        top: 5,
+                        right: 70,
+                        bottom: 5,
+                        left: 0
+                    }
+                }
+            }
+        };
+        setInterval(function(){
+            if(!isNaN($scope.sensortag.ambTempData.temp))
+            $scope.pieAmbTempData = [{
+                                        key: "Ambient Temperature",
+                                        y: $scope.sensortag.ambTempData.temp
+                                    },
+                                    {
+                                        key: "",
+                                        y: 100
+                                    }];
+            if(!isNaN($scope.sensortag.objTempData.temp))
+            $scope.pieObjTempData = [{
+                                        key: "Object Temperature",
+                                        y: $scope.sensortag.objTempData.temp
+                                    },
+                                    {
+                                        key: "",
+                                        y: 100
+                                    }];
+            if(!isNaN($scope.sensortag.baroData.temp))
+            $scope.pieBarometerData = [{
+                                        key: "Barometer",
+                                        y: $scope.sensortag.baroData.temp
+                                    },
+                                    {
+                                        key: "",
+                                        y: 1500
+                                    }];
+            if(!isNaN($scope.sensortag.humidityData.temp))
+            $scope.pieHumidityData = [{
+                                        key: "Humidity",
+                                        y: $scope.sensortag.humidityData.temp
+                                    },
+                                    {
+                                        key: "",
+                                        y: 100
+                                    }];
+            if(!isNaN($scope.sensortag.lightData.temp))
+            $scope.pieLightData = [{
+                                        key: "Light",
+                                        y: $scope.sensortag.lightData.temp
+                                    },
+                                    {
+                                        key: "",
+                                        y: 1000
+                                    }];
+            $scope.$apply();
+        }, 500);
+    // ---------- Pie Chart Code End ------------
     
 
     $scope.sensortag.onSuccess = function (message) {
@@ -176,6 +261,17 @@ app.controller('mainController', function ($scope, $mdToast) {
 
     $scope.sensortag.updateUI = function () {
         $scope.$apply();
+    };
+
+    // HACK : To update the PieChart UI when user selects the PieChrat option
+    $scope.graphChange = function(){
+        if($scope.graph === 'Pie Chart'){
+            $scope.sensortag.ambTempData.temp = $scope.sensortag.ambTempData.temp + 1;
+            $scope.sensortag.objTempData.temp = $scope.sensortag.objTempData.temp + 1;
+            $scope.sensortag.baroData.temp = $scope.sensortag.baroData.temp + 1;
+            $scope.sensortag.humidityData.temp = $scope.sensortag.humidityData.temp + 1;
+            $scope.sensortag.lightData.temp = $scope.sensortag.lightData.temp + 1;
+        }
     };
 
     $scope.connectClick = function () {

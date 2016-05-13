@@ -48,6 +48,7 @@
   var gyroscopeService;
   var lightService;
   var movementService;
+  var dt = 0;
 
   class SensorTag {
     constructor() {
@@ -316,7 +317,7 @@
 
       if(!isNaN(Number(tempAmb))){
         sensortag.ambTempData = {
-                  timeNum: Number(d.getTime()),
+                  timeNum: dt,
                   date: currDate,
                   temp: Number(tempAmb)
               }
@@ -324,7 +325,7 @@
 
       if(!isNaN(Number(tempIr))){
         sensortag.objTempData = {
-                  timeNum: Number(d.getTime()),
+                  timeNum: dt,
                   date: currDate,
                   temp: Number(tempIr)
               }
@@ -353,7 +354,7 @@
       var currDate = d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
       if(!isNaN(accelX) && !isNaN(accelY) && !isNaN(accelZ)){
           sensortag.accelData = {
-                  timeNum: Number(d.getTime()),
+                  timeNum: dt,
                   date: currDate,
                   xVal: accelX,
                   yVal: accelY,
@@ -389,7 +390,7 @@
       var currDate = d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
       if(!isNaN(gyroX) && !isNaN(gyroY) && !isNaN(gyroZ)){
           sensortag.gyroData = {
-                  timeNum: Number(d.getTime()),
+                  timeNum: dt,
                   date: currDate,
                   xVal: gyroX,
                   yVal: gyroY,
@@ -425,7 +426,7 @@
       var currDate = d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
       if(!isNaN(magX) && !isNaN(magY) && !isNaN(magZ)){
           sensortag.magnetoData = {
-                timeNum: Number(d.getTime()),
+                timeNum: dt,
                 date: currDate,
                 xVal: magX,
                 yVal: magY,
@@ -472,11 +473,12 @@
 
       if(!isNaN(Number(pressure))){
         sensortag.baroData = {
-                  timeNum: Number(d.getTime()),
                   date: currDate,
+                  timeNum: dt,
                   temp: Number(pressure)
               }
       }
+      dt++;
       sensortag.updateUI();
     }   
 
@@ -503,7 +505,7 @@
 
       if(!isNaN(Number(tempHum))){
         sensortag.humidityData = {
-                  timeNum: Number(d.getTime()),
+                  timeNum: dt,
                   date: currDate,
                   temp: Number(tempHum)
               }
@@ -530,7 +532,7 @@
       var currDate = d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
       if(!isNaN(accelX) && !isNaN(accelY) && !isNaN(accelZ)){
           sensortag.accelData = {
-                  timeNum: Number(d.getTime()),
+                  timeNum: dt,
                   date: currDate,
                   xVal: accelX,
                   yVal: accelY,
@@ -551,7 +553,7 @@
       currDate = d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
       if(!isNaN(gyroX) && !isNaN(gyroY) && !isNaN(gyroZ)){
           sensortag.gyroData = {
-                  timeNum: Number(d.getTime()),
+                  timeNum: dt,
                   date: currDate,
                   xVal: gyroX,
                   yVal: gyroY,
@@ -572,7 +574,7 @@
       currDate = d.getHours()+':'+d.getMinutes()+':'+d.getSeconds();
       if(!isNaN(magX) && !isNaN(magY) && !isNaN(magZ)){
           sensortag.magnetoData = {
-                timeNum: Number(d.getTime()),
+                timeNum: dt,
                 date: currDate,
                 xVal: magX,
                 yVal: magY,
@@ -611,7 +613,7 @@
 
       if(!isNaN(Number(result))){
         sensortag.lightData = {
-                  timeNum: Number(d.getTime()),
+                  timeNum: dt,
                   date: currDate,
                   temp: Number(result)
               }
