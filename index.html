@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SensorTag</title>
-    <link rel='stylesheet prefetch' href='//cdnjs.cloudflare.com/ajax/libs/angular-material/0.9.7/angular-material.min.css'>
+    <link rel='stylesheet prefetch'
+          href='//cdnjs.cloudflare.com/ajax/libs/angular-material/0.9.7/angular-material.min.css'>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.1/nv.d3.min.css"/>
 </head>
 <script src='//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular.min.js'></script>
 <script src='//cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular-animate.min.js'></script>
@@ -22,93 +23,115 @@
 <script src="app.js"></script>
 
 <body ng-app="sensortag" class="thing">
-    <div ng-controller="mainController as main" md-theme-watch="true">
-        <md-input-container style="position: absolute; right: 0px; top: 0px;">
-            <md-select ng-model="graph" style="padding: 5px 2px 15px;" ng-change="graphChange()">
-                <md-option value="Line Chart">Line Chart</md-option>
-                <md-option value="Pie Chart">Pie Chart</md-option>
-                <md-option value="No Graph">No Graph</md-option>
-            </md-select>
-        </md-input-container>
-        <div class="layout-wrap layout-row flex-100" layout="row" flex="100" layout-wrap="" style="margin-top: 25px;">
-            <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25" class="layout-column flex-gt-sm-50 flex-100">
-                <div class="graph-padding">
-                    <md-input-container>
-                        <label>Ambient Temperature</label>
-                        <input type="text" ng-model="sensortag.ambTemp" ng-disabled="true" style="color:black;">
-                    </md-input-container>
-                    <nvd3 options="amdTempOptions" data="amdTempData" style="margin-left: -30px;" ng-show="sensortag.isConnected && graph == 'Line Chart'"></nvd3>
-                    <nvd3 options="pieOptions" data="pieAmbTempData" style="margin-left: -30px;" ng-show="sensortag.isConnected && graph == 'Pie Chart'"></nvd3>
-                </div>
+<div ng-controller="mainController as main" md-theme-watch="true">
+    <md-input-container style="position: absolute; right: 0px; top: 0px;">
+        <md-select ng-model="graph" style="padding: 5px 2px 15px;" ng-change="graphChange()">
+            <md-option value="Line Chart">Line Chart</md-option>
+            <md-option value="Pie Chart">Pie Chart</md-option>
+            <md-option value="No Graph">No Graph</md-option>
+        </md-select>
+        <md-button class="md-raised md-primary" ng-click="connectClick()" ng-hide="sensortag.connectionStatus!=0">Connect</md-button>
+    </md-input-container>
+    <div class="layout-wrap layout-row flex-100" layout="row" flex="100" layout-wrap="" style="margin-top: 25px;">
+        <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25"
+             class="layout-column flex-gt-sm-50 flex-100">
+            <div class="graph-padding">
+                <md-input-container>
+                    <label>Ambient Temperature</label>
+                    <input type="text" ng-model="sensortag.ambTemp" ng-disabled="true" style="color:black;">
+                </md-input-container>
+                <nvd3 options="amdTempOptions" data="amdTempData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && graph == 'Line Chart'"></nvd3>
+                <nvd3 options="pieOptions" data="pieAmbTempData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && graph == 'Pie Chart'"></nvd3>
             </div>
-            <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25" class="layout-column flex-gt-sm-50 flex-100">
-                <div class="graph-padding">
-                    <md-input-container>
-                        <label>Object Temperature</label>
-                        <input type="text" ng-model="sensortag.objTemp" ng-disabled="true" style="color:black;">
-                    </md-input-container>
-                    <nvd3 options="objTempOptions" data="objTempdata" style="margin-left: -30px;" ng-show="sensortag.isConnected && graph == 'Line Chart'"></nvd3>
-                    <nvd3 options="pieOptions" data="pieObjTempData" style="margin-left: -30px;" ng-show="sensortag.isConnected && graph == 'Pie Chart'"></nvd3>
-                </div>
+        </div>
+        <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25"
+             class="layout-column flex-gt-sm-50 flex-100">
+            <div class="graph-padding">
+                <md-input-container>
+                    <label>Object Temperature</label>
+                    <input type="text" ng-model="sensortag.objTemp" ng-disabled="true" style="color:black;">
+                </md-input-container>
+                <nvd3 options="objTempOptions" data="objTempdata" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && graph == 'Line Chart'"></nvd3>
+                <nvd3 options="pieOptions" data="pieObjTempData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && graph == 'Pie Chart'"></nvd3>
             </div>
-            <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25" class="layout-column flex-gt-sm-50 flex-100">
-                <div class="graph-padding">
-                    <md-input-container>
-                        <label>Accelerometer</label>
-                        <input type="text" ng-model="sensortag.accelerometer" ng-disabled="true" style="color:black;">
-                    </md-input-container>
-                    <nvd3 options="accelOptions" data="accelData" style="margin-left: -30px;" ng-show="sensortag.isConnected && sensortag.accelData && graph != 'No Graph'"></nvd3>
-                </div>
+        </div>
+        <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25"
+             class="layout-column flex-gt-sm-50 flex-100">
+            <div class="graph-padding">
+                <md-input-container>
+                    <label>Accelerometer</label>
+                    <input type="text" ng-model="sensortag.accelerometer" ng-disabled="true" style="color:black;">
+                </md-input-container>
+                <nvd3 options="accelOptions" data="accelData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && sensortag.accelData && graph != 'No Graph'"></nvd3>
             </div>
-            <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25" class="layout-column flex-gt-sm-50 flex-100">
-                <div class="graph-padding">
-                    <md-input-container>
-                        <label>Gyroscope</label>
-                        <input type="text" ng-model="sensortag.gyroscope" ng-disabled="true" style="color:black;">
-                    </md-input-container>
-                    <nvd3 options="gyroOptions" data="gyroData" style="margin-left: -30px;" ng-show="sensortag.isConnected && sensortag.gyroData && graph != 'No Graph'"></nvd3>
-                </div>
+        </div>
+        <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25"
+             class="layout-column flex-gt-sm-50 flex-100">
+            <div class="graph-padding">
+                <md-input-container>
+                    <label>Gyroscope</label>
+                    <input type="text" ng-model="sensortag.gyroscope" ng-disabled="true" style="color:black;">
+                </md-input-container>
+                <nvd3 options="gyroOptions" data="gyroData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && sensortag.gyroData && graph != 'No Graph'"></nvd3>
             </div>
-            <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25" class="layout-column flex-gt-sm-50 flex-100">
-                <div class="graph-padding">
-                    <md-input-container>
-                        <label>Magnetometer</label>
-                        <input type="text" ng-model="sensortag.magnetometer" ng-disabled="true" style="color:black;">
-                    </md-input-container>
-                    <nvd3 options="magnetoOptions" data="magnetoData" style="margin-left: -30px;" ng-show="sensortag.isConnected && sensortag.magnetoData && graph != 'No Graph'"></nvd3>
-                </div>
+        </div>
+        <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25"
+             class="layout-column flex-gt-sm-50 flex-100">
+            <div class="graph-padding">
+                <md-input-container>
+                    <label>Magnetometer</label>
+                    <input type="text" ng-model="sensortag.magnetometer" ng-disabled="true" style="color:black;">
+                </md-input-container>
+                <nvd3 options="magnetoOptions" data="magnetoData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && sensortag.magnetoData && graph != 'No Graph'"></nvd3>
             </div>
-            <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25" class="layout-column flex-gt-sm-50 flex-100">
-                <div class="graph-padding">
-                    <md-input-container>
-                        <label>Barometer</label>
-                        <input type="text" ng-model="sensortag.barometer" ng-disabled="true" style="color:black;">
-                    </md-input-container>
-                    <nvd3 options="baroOptions" data="baroData" style="margin-left: -30px;" ng-show="sensortag.isConnected && sensortag.baroData && graph == 'Line Chart'"></nvd3>
-                    <nvd3 options="pieOptions" data="pieBarometerData" style="margin-left: -30px;" ng-show="sensortag.isConnected && sensortag.baroData && graph == 'Pie Chart'"></nvd3>
-                </div>
+        </div>
+        <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25"
+             class="layout-column flex-gt-sm-50 flex-100">
+            <div class="graph-padding">
+                <md-input-container>
+                    <label>Barometer</label>
+                    <input type="text" ng-model="sensortag.barometer" ng-disabled="true" style="color:black;">
+                </md-input-container>
+                <nvd3 options="baroOptions" data="baroData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && sensortag.baroData && graph == 'Line Chart'"></nvd3>
+                <nvd3 options="pieOptions" data="pieBarometerData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && sensortag.baroData && graph == 'Pie Chart'"></nvd3>
             </div>
-            <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25" class="layout-column flex-gt-sm-50 flex-100">
-                <div class="graph-padding">
-                    <md-input-container>
-                        <label>Relative Humidity</label>
-                        <input type="text" ng-model="sensortag.humidity" ng-disabled="true" style="color:black;">
-                    </md-input-container>
-                    <nvd3 options="humidityOptions" data="humidityData" style="margin-left: -30px;" ng-show="sensortag.isConnected && sensortag.humidityData && graph == 'Line Chart'"></nvd3>
-                    <nvd3 options="pieOptions" data="pieHumidityData" style="margin-left: -30px;" ng-show="sensortag.isConnected && sensortag.humidityData && graph == 'Pie Chart'"></nvd3>
-                </div>
+        </div>
+        <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25"
+             class="layout-column flex-gt-sm-50 flex-100">
+            <div class="graph-padding">
+                <md-input-container>
+                    <label>Relative Humidity</label>
+                    <input type="text" ng-model="sensortag.humidity" ng-disabled="true" style="color:black;">
+                </md-input-container>
+                <nvd3 options="humidityOptions" data="humidityData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && sensortag.humidityData && graph == 'Line Chart'"></nvd3>
+                <nvd3 options="pieOptions" data="pieHumidityData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && sensortag.humidityData && graph == 'Pie Chart'"></nvd3>
             </div>
-            <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25" class="layout-column flex-gt-sm-50 flex-100" ng-show="sensortag.sensortag2">
-                <div class="graph-padding">
-                    <md-input-container>
-                        <label>Light Sensor</label>
-                        <input type="text" ng-model="sensortag.light" ng-disabled="true" style="color:black;">
-                    </md-input-container>
-                    <nvd3 options="lightOptions" data="lightData" style="margin-left: -30px;" ng-show="sensortag.isConnected && sensortag.lightData && graph == 'Line Chart'"></nvd3>
-                    <nvd3 options="pieOptions" data="pieLightData" style="margin-left: -30px;" ng-show="sensortag.isConnected && sensortag.lightData && graph == 'Pie Chart'"></nvd3>
-                </div>
+        </div>
+        <div layout="column" flex="100" flex-gt-sm="50" flex-gt-md="33" flex-gt-lg="25"
+             class="layout-column flex-gt-sm-50 flex-100" ng-show="sensortag.sensortag2">
+            <div class="graph-padding">
+                <md-input-container>
+                    <label>Light Sensor</label>
+                    <input type="text" ng-model="sensortag.light" ng-disabled="true" style="color:black;">
+                </md-input-container>
+                <nvd3 options="lightOptions" data="lightData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && sensortag.lightData && graph == 'Line Chart'"></nvd3>
+                <nvd3 options="pieOptions" data="pieLightData" style="margin-left: -30px;"
+                      ng-show="sensortag.isConnected && sensortag.lightData && graph == 'Pie Chart'"></nvd3>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>
