@@ -278,13 +278,10 @@ app.controller('mainController', function ($scope, $mdToast) {
         $scope.sensortag.onSuccess('Connecting ....');
         sensortag.connect().then(function () {
             $scope.sensortag.isConnected = true;
-            $scope.sensortag.device._gattIp.ondisconnect = function(peripheral, error){
-                if(peripheral)
-                    $scope.sensortag.onError(peripheral.name + " disconnected");
-                else
-                    $scope.sensortag.onError("Device disconnected");
+            $scope.sensortag.device._gattIpPeripheral.on('disconnected', function(peripheral){
+                $scope.sensortag.onError(peripheral.name + " disconnected");
                 console.log('disconnected');
-            }
+            });
             return sensortag.onSuccess('Connected with SensorTag');
         }).catch(function (error) {
             console.error('Argh!', error, error.stack ? error.stack : '');

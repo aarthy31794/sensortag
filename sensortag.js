@@ -188,7 +188,7 @@
                               }), service.getCharacteristic(BARO_CONF).then(function (characteristic) {
                                   return window.sensortag.enableCharac(characteristic);
                               }), service.getCharacteristic(HUMD_DATA).then(function (characteristic) {
-                                  characteristic.addEventListener('characteristicvaluechanged', window.sensortag.onHumidityChange);
+                                  characteristic.addEventListener('characteristicvaluechanged', window.sensortag.onBarometerChange);
                                   return characteristic.startNotifications();
                               })]);
                           }
