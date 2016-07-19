@@ -1,10 +1,9 @@
-function Util()
-{
-    this.stringToDecArray = function(str){
+function Util() {
+    this.stringToDecArray = function (str) {
         var dec, i;
         var dec_arr = [];
-        if(str){
-            for (i=0; i<str.length; i++) {
+        if (str) {
+            for (i = 0; i < str.length; i++) {
                 dec = str.charCodeAt(i).toString(10);
                 dec_arr.push(Number(dec));
             }
@@ -12,7 +11,7 @@ function Util()
         return dec_arr;
     };
 
-    this.convSignDecimal = function(value) {
+    this.convSignDecimal = function (value) {
         if (value >= 50000) {
             var dec2bin = value.toString(2);
             var signDec = 0;
@@ -30,7 +29,7 @@ function Util()
         }
     };
 
-    this.convSignAcc = function(value) {
+    this.convSignAcc = function (value) {
         if (value >= 200) {
             var dec2bin = value.toString(2);
             var signDec = 0;
@@ -48,7 +47,7 @@ function Util()
 
     };
 
-    this.calcTAmb = function(data) {
+    this.calcTAmb = function (data) {
         if (data && data.length < 4) {
             return -0.0;
         }
@@ -60,7 +59,7 @@ function Util()
         }
     };
 
-    this.calcTempIr = function(data) {
+    this.calcTempIr = function (data) {
         var objTemp;
         var ambTemp;
 
@@ -96,7 +95,7 @@ function Util()
         }
     };
 
-    this.calcTempIr_st2 = function(data) {
+    this.calcTempIr_st2 = function (data) {
         var objTemp;
 
         if (data && data.length < 4) {
@@ -113,7 +112,7 @@ function Util()
         }
     };
 
-    this.calcAccXValue = function(data) {
+    this.calcAccXValue = function (data) {
         var data1 = '0x' + data[0] + '' + data[1];
         var temp = this.convSignAcc(parseInt(data1, 16));
 
@@ -140,7 +139,7 @@ function Util()
         return x;
     };
 
-    this.calcAccYValue = function(data) {
+    this.calcAccYValue = function (data) {
         var data1 = '0x' + data[2] + '' + data[3];
         var temp = this.convSignAcc(parseInt(data1, 16));
 
@@ -167,7 +166,7 @@ function Util()
         return y;
     };
 
-    this.calcAccZValue = function(data) {
+    this.calcAccZValue = function (data) {
         var data1 = '0x' + data[4] + '' + data[5];
         var temp = this.convSignAcc(parseInt(data1, 16));
 
@@ -195,7 +194,7 @@ function Util()
         return z;
     };
 
-    this.calcGyrXValue = function(data) {
+    this.calcGyrXValue = function (data) {
         var data1 = '0x' + data[6] + '' + data[7] + '' + data[4] + '' + data[5];
         var rawX = this.convSignDecimal(parseInt(data1, 16));
         rawX = rawX * (500 / 65536) * -1;
@@ -203,7 +202,7 @@ function Util()
         return rawX;
     };
 
-    this.calcGyrYValue = function(data) {
+    this.calcGyrYValue = function (data) {
         var data1 = '0x' + data[2] + '' + data[3] + '' + data[0] + '' + data[1];
         var rawY = this.convSignDecimal(parseInt(data1, 16));
         rawY = rawY * (500 / 65536) * -1;
@@ -211,7 +210,7 @@ function Util()
         return rawY;
     };
 
-    this.calcGyrZValue = function(data) {
+    this.calcGyrZValue = function (data) {
         var data1 = '0x' + data[10] + '' + data[11] + '' + data[8] + '' + data[9];
         var rawZ = this.convSignDecimal(parseInt(data1, 16));
         rawZ = rawZ * (500 / 65536);
@@ -219,7 +218,7 @@ function Util()
         return rawZ;
     };
 
-    this.calcMagXValue = function(data) {
+    this.calcMagXValue = function (data) {
         var calX = 0;
         var lastX;
         if (data && data.length < 6) {
@@ -234,7 +233,7 @@ function Util()
         }
     };
 
-    this.calcMagYValue = function(data) {
+    this.calcMagYValue = function (data) {
         var calY = 0;
         var lastY;
         if (data && data.length < 6) {
@@ -249,7 +248,7 @@ function Util()
         }
     };
 
-    this.calcMagZValue = function(data) {
+    this.calcMagZValue = function (data) {
         var calZ = 0;
         var lastZ;
         if (data && data.length < 6) {
@@ -263,7 +262,7 @@ function Util()
         }
     };
 
-    this.calcPress = function(data) {
+    this.calcPress = function (data) {
         var hum;
         var rHVal = 0.0;
         if (data && data.length < 3) {
@@ -276,7 +275,7 @@ function Util()
         }
     };
 
-    this.movement_ACC_X = function(data) {
+    this.movement_ACC_X = function (data) {
         var SCALE = 4096.0;
 
         var data1 = '0x' + data[14] + '' + data[15] + '' + data[12] + '' + data[13];
@@ -286,7 +285,7 @@ function Util()
         return x;
     };
 
-    this.movement_ACC_Y = function(data) {
+    this.movement_ACC_Y = function (data) {
         var SCALE = 4096.0;
 
         var data2 = '0x' + data[18] + '' + data[19] + '' + data[16] + '' + data[17];
@@ -296,7 +295,7 @@ function Util()
         return y;
     };
 
-    this.movement_ACC_Z = function(data) {
+    this.movement_ACC_Z = function (data) {
         var SCALE = 4096.0;
 
         var data3 = '0x' + data[22] + '' + data[23] + '' + data[20] + '' + data[21];
@@ -306,7 +305,7 @@ function Util()
         return z;
     };
 
-    this.movement_GYRO_X = function(data) {
+    this.movement_GYRO_X = function (data) {
         var SCALE = 128.0;
 
         var data1 = '0x' + data[2] + '' + data[3] + '' + data[0] + '' + data[1];
@@ -316,7 +315,7 @@ function Util()
         return x;
     };
 
-    this.movement_GYRO_Y = function(data) {
+    this.movement_GYRO_Y = function (data) {
         var SCALE = 128.0;
 
         var data2 = '0x' + data[6] + '' + data[7] + '' + data[4] + '' + data[5];
@@ -326,7 +325,7 @@ function Util()
         return y;
     };
 
-    this.movement_GYRO_Z = function(data) {
+    this.movement_GYRO_Z = function (data) {
         var SCALE = 128.0;
 
         var data3 = '0x' + data[10] + '' + data[11] + '' + data[8] + '' + data[9];
@@ -336,7 +335,7 @@ function Util()
         return z;
     };
 
-    this.movement_MAG_X = function(data) {
+    this.movement_MAG_X = function (data) {
         var SCALE = (32768 / 4912);
 
         var data1 = '0x' + data[26] + '' + data[27] + '' + data[24] + '' + data[25];
@@ -346,7 +345,7 @@ function Util()
         return x;
     };
 
-    this.movement_MAG_Y = function(data) {
+    this.movement_MAG_Y = function (data) {
         var SCALE = (32768 / 4912);
 
         var data2 = '0x' + data[30] + '' + data[31] + '' + data[28] + '' + data[29];
@@ -356,7 +355,7 @@ function Util()
         return y;
     };
 
-    this.movement_MAG_Z = function(data) {
+    this.movement_MAG_Z = function (data) {
         var SCALE = (32768 / 4912);
 
         var data3 = '0x' + data[34] + '' + data[35] + '' + data[32] + '' + data[33];
@@ -366,7 +365,7 @@ function Util()
         return z;
     };
 
-    this.calcBarometerCalib = function(data) {
+    this.calcBarometerCalib = function (data) {
         var c1, c2, c3, c4, c5, c6, c7, c8;
 
         if (data) {
@@ -394,7 +393,7 @@ function Util()
 
     };
 
-    this.calcPressure_st2 = function(dataMain) {
+    this.calcPressure_st2 = function (dataMain) {
         var data = dataMain;
 
         if (data && data.length < 4) {
@@ -432,7 +431,7 @@ function Util()
         }
     };
 
-    this.calcPressure = function(dataMain) {
+    this.calcPressure = function (dataMain) {
         var data = dataMain;
 
         if (data && data.length < 4) {
@@ -460,7 +459,7 @@ function Util()
         }
     };
 
-    this.calLight = function(data) {
+    this.calLight = function (data) {
         if (data && data.length === 4) {
             var mantissa;
             var exponent;
@@ -477,6 +476,6 @@ function Util()
             return (output / 100.0);
         }
     };
-    
+
     return this;
 }
