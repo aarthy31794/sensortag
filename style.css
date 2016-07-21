@@ -1,14 +1,22 @@
 .thing {
-  padding: 10px;
-  font-size: large;
-  font-weight: 500;
+    padding: 10px;
+    font-size: large;
+    font-weight: 500;
 }
-md-toast.md-success-toast-theme {
+
+md-toast.md-success-toast-theme .md-toast-content {
     background-color: green;
 }
-md-toast.md-error-toast-theme {
+
+md-toast.md-error-toast-theme .md-toast-content {
     background-color: red;
 }
-.graph-padding{
-	margin : 10px;
+
+md-toast {
+    top: 10px;
+    right: 0px;
+}
+
+.graph-padding {
+    margin: 10px;
 }

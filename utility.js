@@ -112,15 +112,15 @@ function Util() {
         }
     };
 
-    this.calcAccXValue = function (data) {
+    this.calcAccXValue = function (data, sensortag_firmware) {
         var data1 = '0x' + data[0] + '' + data[1];
         var temp = this.convSignAcc(parseInt(data1, 16));
 
         var x;
         var SCALE;
         if (data1 && data1.indexOf('undefined') === -1) {
-            if (sensortag.sensortag_firmware) {
-                if (sensortag.sensortag_firmware.indexOf('1.5') === -1) {
+            if (sensortag_firmware) {
+                if (sensortag_firmware.indexOf('1.5') === -1) {
                     // Range 2G
                     SCALE = 16.0;
                     x = temp / SCALE;
@@ -139,15 +139,15 @@ function Util() {
         return x;
     };
 
-    this.calcAccYValue = function (data) {
+    this.calcAccYValue = function (data, sensortag_firmware) {
         var data1 = '0x' + data[2] + '' + data[3];
         var temp = this.convSignAcc(parseInt(data1, 16));
 
         var y;
         var SCALE;
         if (data1 && data1.indexOf('undefined') === -1) {
-            if (sensortag.sensortag_firmware) {
-                if (sensortag.sensortag_firmware.indexOf('1.5') === -1) {
+            if (sensortag_firmware) {
+                if (sensortag_firmware.indexOf('1.5') === -1) {
                     // Range 2G
                     SCALE = 16.0;
                     y = temp / SCALE;
@@ -166,16 +166,16 @@ function Util() {
         return y;
     };
 
-    this.calcAccZValue = function (data) {
+    this.calcAccZValue = function (data, sensortag_firmware) {
         var data1 = '0x' + data[4] + '' + data[5];
         var temp = this.convSignAcc(parseInt(data1, 16));
 
         var z;
         var SCALE;
         if (data1 && data1.indexOf('undefined') === -1) {
-            if (sensortag.sensortag_firmware) {
+            if (sensortag_firmware) {
                 temp = temp * -1;
-                if (sensortag.sensortag_firmware.indexOf('1.5') === -1) {
+                if (sensortag_firmware.indexOf('1.5') === -1) {
                     // Range 2G
                     SCALE = 16.0;
                     z = temp / SCALE;
