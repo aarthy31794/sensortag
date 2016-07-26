@@ -57,17 +57,14 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
             },
             xAxis: {
                 axisLabel: 'Time',
+                showMaxMin: false,
                 tickFormat: function (d) {
-                    if ($scope.baroData[0].values[0]) {
-                        var label = $scope.baroData[0].values[0].label;
-                        if (Math.abs(d) == 1) {
-                            return (Math.abs(d) + ' second ago');
-                        }
-                        return (Math.abs(d) + ' seconds ago');
+                    if (Math.abs(d) == 1) {
+                        return (Math.abs(d) + ' sec ago');
                     }
+                    return (Math.abs(d) + ' sec'+"'s"+' ago');
                 }
             },
-            forceX: [-100, 0]
         }
     };
 
@@ -79,6 +76,15 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     $scope.baroOptions = angular.copy($scope.lineGraphoptions);
     $scope.humidityOptions = angular.copy($scope.lineGraphoptions);
     $scope.lightOptions = angular.copy($scope.lineGraphoptions);
+
+    $scope.amdTempOptions.chart.forceY = [20, 70];
+    $scope.objTempOptions.chart.forceY = [2, 70];
+    $scope.accelOptions.chart.forceY = [-1, 1];
+    $scope.gyroOptions.chart.forceY = [-2, 2];
+    $scope.magnetoOptions.chart.forceY = [-100, 100];
+    $scope.baroOptions.chart.forceY = [500, 1500];
+    $scope.humidityOptions.chart.forceY = [20, 100];
+    $scope.lightOptions.chart.forceY = [0, 200];
 
     $scope.amdTempData = [{values: [], key: 'Ambient Temperature'}];
     $scope.objTempdata = [{values: [], key: 'Object Temperature'}];
@@ -108,7 +114,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                     label: ambTempData.date
                 });
             }
-            if ($scope.amdTempData[0].values.length > 100) $scope.amdTempData[0].values.shift();
+            if ($scope.amdTempData[0].values.length > 30) $scope.amdTempData[0].values.shift();
         }
 
         if (objTempData) {
@@ -118,7 +124,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                     y: objTempData.temp,
                     label: objTempData.date
                 });
-            if ($scope.objTempdata[0].values.length > 100) $scope.objTempdata[0].values.shift();
+            if ($scope.objTempdata[0].values.length > 30) $scope.objTempdata[0].values.shift();
         }
 
         if (accelData) {
@@ -136,9 +142,9 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                     y: accelData.zVal
                 });
             }
-            if ($scope.accelData[0].values.length > 100) $scope.accelData[0].values.shift();
-            if ($scope.accelData[1].values.length > 100) $scope.accelData[1].values.shift();
-            if ($scope.accelData[2].values.length > 100) $scope.accelData[2].values.shift();
+            if ($scope.accelData[0].values.length > 30) $scope.accelData[0].values.shift();
+            if ($scope.accelData[1].values.length > 30) $scope.accelData[1].values.shift();
+            if ($scope.accelData[2].values.length > 30) $scope.accelData[2].values.shift();
         }
 
         if (gyroData) {
@@ -156,9 +162,9 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                     y: gyroData.zVal
                 });
             }
-            if ($scope.gyroData[0].values.length > 100) $scope.gyroData[0].values.shift();
-            if ($scope.gyroData[1].values.length > 100) $scope.gyroData[1].values.shift();
-            if ($scope.gyroData[2].values.length > 100) $scope.gyroData[2].values.shift();
+            if ($scope.gyroData[0].values.length > 30) $scope.gyroData[0].values.shift();
+            if ($scope.gyroData[1].values.length > 30) $scope.gyroData[1].values.shift();
+            if ($scope.gyroData[2].values.length > 30) $scope.gyroData[2].values.shift();
         }
 
         if (magnetoData) {
@@ -176,9 +182,9 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                     y: magnetoData.zVal
                 });
             }
-            if ($scope.magnetoData[0].values.length > 100) $scope.magnetoData[0].values.shift();
-            if ($scope.magnetoData[1].values.length > 100) $scope.magnetoData[1].values.shift();
-            if ($scope.magnetoData[2].values.length > 100) $scope.magnetoData[2].values.shift();
+            if ($scope.magnetoData[0].values.length > 30) $scope.magnetoData[0].values.shift();
+            if ($scope.magnetoData[1].values.length > 30) $scope.magnetoData[1].values.shift();
+            if ($scope.magnetoData[2].values.length > 30) $scope.magnetoData[2].values.shift();
         }
 
         if (baroData) {
@@ -189,7 +195,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                     label: baroData.date
                 });
             }
-            if ($scope.baroData[0].values.length > 100) $scope.baroData[0].values.shift();
+            if ($scope.baroData[0].values.length > 30) $scope.baroData[0].values.shift();
         }
 
         if (humidityData) {
@@ -200,7 +206,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                     label: humidityData.date
                 });
             }
-            if ($scope.humidityData[0].values.length > 100) $scope.humidityData[0].values.shift();
+            if ($scope.humidityData[0].values.length > 30) $scope.humidityData[0].values.shift();
         }
 
         if (lightData) {
@@ -211,7 +217,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                     label: lightData.date
                 });
             }
-            if ($scope.lightData[0].values.length > 100) $scope.lightData[0].values.shift();
+            if ($scope.lightData[0].values.length > 30) $scope.lightData[0].values.shift();
         }
 
         x++;
@@ -374,9 +380,8 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     $scope.sensortag.updateUI = function (event, notifyChar) {
         if ($scope.showingLoadigIndicator) {
             goodToast('Connected...');
-            dismissLoadingIndicator()
+            dismissLoadingIndicator();
         }
-        ;
         switch (notifyChar) {
             case 'temperature':
                 onTempChange(event);
@@ -629,7 +634,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(Number(pressure))) {
             baroData = {
-                date: currDate,
+                date: d,
                 timeNum: dt,
                 temp: Number(pressure)
             }
