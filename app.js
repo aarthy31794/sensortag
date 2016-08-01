@@ -363,7 +363,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         $mdDialog.cancel();
     };
 
-    $scope.sensortag.updateUI = function () {
+    $scope.updateUI = function () {
         $scope.$apply();
     };
 
@@ -635,7 +635,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(Number(pressure))) {
             baroData = {
-                date: d,
+                date: currDate,
                 timeNum: dt,
                 temp: Number(pressure)
             }
