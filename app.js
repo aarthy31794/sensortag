@@ -3,8 +3,8 @@ var app;
     app = angular.module('sensortag', ['ngMaterial', 'nvd3'])
         .config(function ($mdThemingProvider) {
             $mdThemingProvider.theme('default')
-                .primaryPalette('blue-grey')
-                .accentPalette('blue');
+                .primaryPalette('blue')
+                .accentPalette('blue-grey');
             $mdThemingProvider.theme('success-toast');
             $mdThemingProvider.theme('error-toast');
 
@@ -59,11 +59,11 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                 axisLabel: 'Time',
                 showMaxMin: false,
                 tickFormat: function (d) {
-                    if (Math.abs(d) == 1) {
-                        return (Math.abs(d) + ' sec ago');
+                    if ($scope.baroData[0].values[d]) {
+                        var label = $scope.baroData[0].values[d].label;
+                        return label;
                     }
-                    return (Math.abs(d) + ' sec'+"'s"+' ago');
-                }
+                } 
             },
         }
     };
@@ -334,7 +334,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
             '<md-dialog-content>' +
             '<div layout="row" layout-align="center" style="padding: 40px;">' +
             '<div style="padding-bottom: 20px;">' +
-            '<md-progress-circular class="md-accent md-hue-1" md-mode="indeterminate" md-diameter="40" style="right: 20px;bottom: 10px;">' +
+            '<md-progress-circular md-mode="indeterminate" md-diameter="40" style="right: 20px;bottom: 10px;">' +
             '</md-progress-circular>' +
             '</div>' +
             '</div>' +
