@@ -370,11 +370,11 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     // HACK : To update the PieChart UI when user selects the PieChrat option
     $scope.graphChange = function () {
         if ($scope.graph === 'Pie Chart') {
-            ambTempData.temp = ambTempData.temp + 1;
-            objTempData.temp = objTempData.temp + 1;
-            baroData.temp = baroData.temp + 1;
-            humidityData.temp = humidityData.temp + 1;
-            lightData.temp = lightData.temp + 1;
+            if(ambTempData) ambTempData.temp = ambTempData.temp + 1;
+            if(objTempData) objTempData.temp = objTempData.temp + 1;
+            if(baroData) baroData.temp = baroData.temp + 1;
+            if(humidityData) humidityData.temp = humidityData.temp + 1;
+            if(lightData) lightData.temp = lightData.temp + 1;
         }
     };
 
