@@ -30,6 +30,8 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     var baroData;
     var humidityData;
     var lightData;
+    $scope.timeDispData1 = [];
+    $scope.timeDispData2 = [];
 
     // ---------- Line Graph Code START -----------
     $scope.lineGraphoptions = {
@@ -59,17 +61,20 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                 axisLabel: 'Time',
                 showMaxMin: false,
                 tickFormat: function (d) {
-                    if (Math.abs(d) == 1) {
-                        return (Math.abs(d) + ' sec ago');
+                    var label = '';
+                    if ($scope.timeDispData1[Math.abs(d)]) {
+                        label = $scope.timeDispData1[Math.abs(d)];
+                    } else if ($scope.timeDispData2[Math.abs(d)]) {
+                        label = $scope.timeDispData2[Math.abs(d)];
                     }
-                    return (Math.abs(d) + ' sec'+"'s"+' ago');
+                    return label ? label : d3.time.format('%x')(new Date());
                 }
             },
             noData: ("")
         }
     };
 
-    $scope.amdTempOptions = angular.copy($scope.lineGraphoptions);
+    $scope.ambTempOptions = angular.copy($scope.lineGraphoptions);
     $scope.objTempOptions = angular.copy($scope.lineGraphoptions);
     $scope.accelOptions = angular.copy($scope.lineGraphoptions);
     $scope.gyroOptions = angular.copy($scope.lineGraphoptions);
@@ -78,7 +83,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     $scope.humidityOptions = angular.copy($scope.lineGraphoptions);
     $scope.lightOptions = angular.copy($scope.lineGraphoptions);
 
-    $scope.amdTempOptions.chart.forceY = [20, 70];
+    $scope.ambTempOptions.chart.forceY = [20, 70];
     $scope.objTempOptions.chart.forceY = [2, 70];
     $scope.accelOptions.chart.forceY = [-1, 1];
     $scope.gyroOptions.chart.forceY = [-2, 2];
@@ -87,8 +92,8 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     $scope.humidityOptions.chart.forceY = [20, 100];
     $scope.lightOptions.chart.forceY = [0, 200];
 
-    $scope.amdTempData = [{values: [], key: 'Ambient Temperature'}];
-    $scope.objTempdata = [{values: [], key: 'Object Temperature'}];
+    $scope.ambTempData = [{values: [], key: 'Ambient Temperature'}];
+    $scope.objTempData = [{values: [], key: 'Object Temperature'}];
     $scope.accelData = [{values: [], key: 'x-axis', color: '#e11126'},
         {values: [], key: 'y-axis', color: '#1153e1'},
         {values: [], key: 'z-axis', color: '#707276'}
@@ -105,27 +110,27 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     $scope.humidityData = [{values: [], key: 'Relative Humidity'}];
     $scope.lightData = [{values: [], key: 'Light Sensor'}];
 
-    var x = 0, dt = 0;
+    var dt = 0;
     setInterval(function () {
         if (ambTempData) {
             if (!isNaN(ambTempData.timeNum) && !isNaN(ambTempData.temp)) {
-                $scope.amdTempData[0].values.push({
+                $scope.ambTempData[0].values.push({
                     x: ambTempData.timeNum,
                     y: ambTempData.temp,
                     label: ambTempData.date
                 });
             }
-            if ($scope.amdTempData[0].values.length > 30) $scope.amdTempData[0].values.shift();
+            if ($scope.ambTempData[0].values.length > 30) $scope.ambTempData[0].values.shift();
         }
 
         if (objTempData) {
             if (!isNaN(objTempData.timeNum) && !isNaN(objTempData.temp))
-                $scope.objTempdata[0].values.push({
+                $scope.objTempData[0].values.push({
                     x: objTempData.timeNum,
                     y: objTempData.temp,
                     label: objTempData.date
                 });
-            if ($scope.objTempdata[0].values.length > 30) $scope.objTempdata[0].values.shift();
+            if ($scope.objTempData[0].values.length > 30) $scope.objTempData[0].values.shift();
         }
 
         if (accelData) {
@@ -221,7 +226,6 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
             if ($scope.lightData[0].values.length > 30) $scope.lightData[0].values.shift();
         }
 
-        x++;
     }, 1000);
     // ---------- Line Graph Code END -----------
 
@@ -370,11 +374,11 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     // HACK : To update the PieChart UI when user selects the PieChrat option
     $scope.graphChange = function () {
         if ($scope.graph === 'Pie Chart') {
-            if(ambTempData) ambTempData.temp = ambTempData.temp + 1;
-            if(objTempData) objTempData.temp = objTempData.temp + 1;
-            if(baroData) baroData.temp = baroData.temp + 1;
-            if(humidityData) humidityData.temp = humidityData.temp + 1;
-            if(lightData) lightData.temp = lightData.temp + 1;
+            if (ambTempData) ambTempData.temp = ambTempData.temp + 1;
+            if (objTempData) objTempData.temp = objTempData.temp + 1;
+            if (baroData) baroData.temp = baroData.temp + 1;
+            if (humidityData) humidityData.temp = humidityData.temp + 1;
+            if (lightData) lightData.temp = lightData.temp + 1;
         }
     };
 
@@ -434,18 +438,100 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         $scope.onConnect();
     }
 
-    /* Sensor Notification Services*/
-    function onTempChange(event) {
-        var characteristic = event.target;
+    /* Common calculation functins for all sensors */
+    function getCurrentTime() {
+        var d = new Date();
+        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 
+        return currDate;
+    }
+
+    function getHexDataFromCharacValue(value) {
         var hex = '';
-        for (var i = 0; i < characteristic.value.byteLength; ++i) {
-            var hexChar = characteristic.value.getUint8(i).toString(16);
+        for (var i = 0; i < value.byteLength; ++i) {
+            var hexChar = value.getUint8(i).toString(16);
             if (hexChar.length == 1) {
                 hexChar = '0' + hexChar;
             }
             hex += hexChar;
         }
+        return hex;
+    }
+
+    function accelerometerUpdate(accelX, accelY, accelZ) {
+
+        if (!isNaN(accelX) && !isNaN(accelY) && !isNaN(accelZ)) {
+            accelData = {
+                timeNum: dt,
+                date: getCurrentTime(),
+                xVal: accelX,
+                yVal: accelY,
+                zVal: accelZ
+            }
+            accelX = 'X: ' + accelX.toFixed(1) + 'G ';
+            accelY = 'Y: ' + accelY.toFixed(1) + 'G ';
+            accelZ = 'Z: ' + accelZ.toFixed(1) + 'G ';
+
+            var accelVar = accelX + ', ' + accelY + ', ' + accelZ;
+            $scope.accelerometer = accelVar;
+        } else {
+            $scope.accelerometer = 'X: 0.0G Y: 0.0G Z: 0.0G';
+        }
+
+        $scope.updateUI();
+    }
+
+    function gyroscopeUpdate(gyroX, gyroY, gyroZ) {
+
+        if (!isNaN(gyroX) && !isNaN(gyroY) && !isNaN(gyroZ)) {
+            gyroData = {
+                timeNum: dt,
+                date: getCurrentTime(),
+                xVal: gyroX,
+                yVal: gyroY,
+                zVal: gyroZ
+            }
+            gyroX = 'X: ' + gyroX.toFixed(1) + '°/S';
+            gyroY = 'Y: ' + gyroY.toFixed(1) + '°/S';
+            gyroZ = 'Z: ' + gyroZ.toFixed(1) + '°/S';
+
+            var GyroVal = gyroX + ', ' + gyroY + ', ' + gyroZ;
+            $scope.gyroscope = GyroVal;
+        } else {
+            $scope.gyroscope = 'X: 0.0°/S Y: 0.0°/S Z: 0.0°/S';
+        }
+
+        $scope.updateUI();
+    }
+
+    function magnetometerUpdate(magX, magY, magZ) {
+
+        if (!isNaN(magX) && !isNaN(magY) && !isNaN(magZ)) {
+            magnetoData = {
+                timeNum: dt,
+                date: getCurrentTime(),
+                xVal: magX,
+                yVal: magY,
+                zVal: magZ
+            }
+            magX = 'X: ' + magX.toFixed(2) + 'uT ';
+            magY = 'Y: ' + magY.toFixed(2) + 'uT ';
+            magZ = 'Z: ' + magZ.toFixed(2) + 'uT ';
+
+            var magVal = magX + ', ' + magY + ', ' + magZ;
+            $scope.magnetometer = magVal;
+        } else {
+            $scope.magnetometer = 'X: 0.0uT Y: 0.0uT Z: 0.0uT';
+        }
+
+        $scope.updateUI();
+    }
+
+    /* Sensor Notification Services*/
+    function onTempChange(event) {
+        var characteristic = event.target;
+
+        var hex = getHexDataFromCharacValue(characteristic.value);
 
         var tempAmb = util.calcTAmb(hex);
         if (!isNaN(tempAmb) && tempAmb !== 0) {
@@ -474,13 +560,10 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
             }
         }
 
-        var d = new Date();
-        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-
         if (!isNaN(Number(tempAmb))) {
             ambTempData = {
                 timeNum: dt,
-                date: currDate,
+                date: getCurrentTime(),
                 temp: Number(tempAmb)
             }
         }
@@ -488,10 +571,12 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         if (!isNaN(Number(tempIr))) {
             objTempData = {
                 timeNum: dt,
-                date: currDate,
+                date: getCurrentTime(),
                 temp: Number(tempIr)
             }
         }
+
+        $scope.timeDispData1.push(getCurrentTime()); //Added this one for display the time on x-axis
 
         $scope.updateUI();
     }
@@ -499,122 +584,44 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onAccelerometerChange(event) {
         var characteristic = event.target;
 
-        var hex = '';
-        for (var i = 0; i < characteristic.value.byteLength; ++i) {
-            var hexChar = characteristic.value.getUint8(i).toString(16);
-            if (hexChar.length == 1) {
-                hexChar = '0' + hexChar;
-            }
-            hex += hexChar;
-        }
+        var hex = getHexDataFromCharacValue(characteristic.value);
 
         var accelX = util.calcAccXValue(hex, $scope.sensortag.sensortag_firmware);
         var accelY = util.calcAccYValue(hex, $scope.sensortag.sensortag_firmware);
         var accelZ = util.calcAccZValue(hex, $scope.sensortag.sensortag_firmware);
 
-        var d = new Date();
-        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-        if (!isNaN(accelX) && !isNaN(accelY) && !isNaN(accelZ)) {
-            accelData = {
-                timeNum: dt,
-                date: currDate,
-                xVal: accelX,
-                yVal: accelY,
-                zVal: accelZ
-            }
-            accelX = 'X: ' + accelX.toFixed(1) + 'G ';
-            accelY = 'Y: ' + accelY.toFixed(1) + 'G ';
-            accelZ = 'Z: ' + accelZ.toFixed(1) + 'G ';
+        accelerometerUpdate(accelX, accelY, accelZ);
 
-            var accelVar = accelX + ', ' + accelY + ', ' + accelZ;
-            $scope.accelerometer = accelVar;
-        }
-        $scope.updateUI();
     }
 
     function onGyroscopeChange(event) {
         var characteristic = event.target;
 
-        var hex = '';
-        for (var i = 0; i < characteristic.value.byteLength; ++i) {
-            var hexChar = characteristic.value.getUint8(i).toString(16);
-            if (hexChar.length == 1) {
-                hexChar = '0' + hexChar;
-            }
-            hex += hexChar;
-        }
+        var hex = getHexDataFromCharacValue(characteristic.value);
 
         var gyroX = util.calcGyrXValue(hex);
         var gyroY = util.calcGyrYValue(hex);
         var gyroZ = util.calcGyrZValue(hex);
 
-        var d = new Date();
-        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-        if (!isNaN(gyroX) && !isNaN(gyroY) && !isNaN(gyroZ)) {
-            gyroData = {
-                timeNum: dt,
-                date: currDate,
-                xVal: gyroX,
-                yVal: gyroY,
-                zVal: gyroZ
-            }
-            gyroX = 'X: ' + gyroX.toFixed(1) + '°/S';
-            gyroY = 'Y: ' + gyroY.toFixed(1) + '°/S';
-            gyroZ = 'Z: ' + gyroZ.toFixed(1) + '°/S';
-
-            var GyroVal = gyroX + ', ' + gyroY + ', ' + gyroZ;
-            $scope.gyroscope = GyroVal;
-        }
-        $scope.updateUI();
+        gyroscopeUpdate(gyroX, gyroY, gyroZ);
     }
 
     function onMagnetometerChange(event) {
         var characteristic = event.target;
 
-        var hex = '';
-        for (var i = 0; i < characteristic.value.byteLength; ++i) {
-            var hexChar = characteristic.value.getUint8(i).toString(16);
-            if (hexChar.length == 1) {
-                hexChar = '0' + hexChar;
-            }
-            hex += hexChar;
-        }
+        var hex = getHexDataFromCharacValue(characteristic.value);
 
         var magX = util.calcMagXValue(hex);
         var magY = util.calcMagYValue(hex);
         var magZ = util.calcMagZValue(hex);
 
-        var d = new Date();
-        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-        if (!isNaN(magX) && !isNaN(magY) && !isNaN(magZ)) {
-            magnetoData = {
-                timeNum: dt,
-                date: currDate,
-                xVal: magX,
-                yVal: magY,
-                zVal: magZ
-            }
-            magX = 'X: ' + magX.toFixed(2) + 'uT ';
-            magY = 'Y: ' + magY.toFixed(2) + 'uT ';
-            magZ = 'Z: ' + magZ.toFixed(2) + 'uT ';
-
-            var magVal = magX + ', ' + magY + ', ' + magZ;
-            $scope.magnetometer = magVal;
-        }
-        $scope.updateUI();
+        magnetometerUpdate(magX, magY, magZ);
     }
 
     function onBarometerChange(event) {
         var characteristic = event.target;
 
-        var hex = '';
-        for (var i = 0; i < characteristic.value.byteLength; ++i) {
-            var hexChar = characteristic.value.getUint8(i).toString(16);
-            if (hexChar.length == 1) {
-                hexChar = '0' + hexChar;
-            }
-            hex += hexChar;
-        }
+        var hex = getHexDataFromCharacValue(characteristic.value);
 
         var pressure;
         if ($scope.sensortag.sensortag2) {
@@ -630,31 +637,24 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         }
         $scope.barometer = pressure + ' mBar';
 
-        var d = new Date();
-        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 
         if (!isNaN(Number(pressure))) {
             baroData = {
-                date: currDate,
+                date: getCurrentTime(),
                 timeNum: dt,
                 temp: Number(pressure)
             }
         }
         dt++;
+        $scope.timeDispData2.push(getCurrentTime()); //Added this one for display the time on x-axis
+
         $scope.updateUI();
     }
 
     function onHumidityChange(event) {
         var characteristic = event.target;
 
-        var hex = '';
-        for (var i = 0; i < characteristic.value.byteLength; ++i) {
-            var hexChar = characteristic.value.getUint8(i).toString(16);
-            if (hexChar.length == 1) {
-                hexChar = '0' + hexChar;
-            }
-            hex += hexChar;
-        }
+        var hex = getHexDataFromCharacValue(characteristic.value);
 
         var tempHum = util.calcPress(hex);
         if (!isNaN(tempHum)) {
@@ -662,13 +662,10 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
             $scope.humidity = tempHum + '%rH';
         }
 
-        var d = new Date();
-        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-
         if (!isNaN(Number(tempHum))) {
             humidityData = {
                 timeNum: dt,
-                date: currDate,
+                date: getCurrentTime(),
                 temp: Number(tempHum)
             }
         }
@@ -678,105 +675,42 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onMovementChange(event) {
         var characteristic = event.target;
 
-        var hex = '';
-        for (var i = 0; i < characteristic.value.byteLength; ++i) {
-            var hexChar = characteristic.value.getUint8(i).toString(16);
-            if (hexChar.length == 1) {
-                hexChar = '0' + hexChar;
-            }
-            hex += hexChar;
-        }
+        var hex = getHexDataFromCharacValue(characteristic.value);
 
         var accelX = Number(util.movement_ACC_X(hex));
         var accelY = Number(util.movement_ACC_Y(hex));
         var accelZ = Number(util.movement_ACC_Z(hex));
-        var d = new Date();
-        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-        if (!isNaN(accelX) && !isNaN(accelY) && !isNaN(accelZ)) {
-            accelData = {
-                timeNum: dt,
-                date: currDate,
-                xVal: accelX,
-                yVal: accelY,
-                zVal: accelZ
-            }
-            accelX = 'X: ' + accelX.toFixed(1) + 'G ';
-            accelY = 'Y: ' + accelY.toFixed(1) + 'G ';
-            accelZ = 'Z: ' + accelZ.toFixed(1) + 'G ';
-            $scope.accelerometer = accelX + '' + accelY + '' + accelZ;
-        } else {
-            $scope.accelerometer = 'X: 0.0G Y: 0.0G Z: 0.0G';
-        }
+
+        accelerometerUpdate(accelX, accelY, accelZ);
 
         var gyroX = Number(util.movement_GYRO_X(hex));
         var gyroY = Number(util.movement_GYRO_Y(hex));
         var gyroZ = Number(util.movement_GYRO_Z(hex));
-        d = new Date();
-        currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-        if (!isNaN(gyroX) && !isNaN(gyroY) && !isNaN(gyroZ)) {
-            gyroData = {
-                timeNum: dt,
-                date: currDate,
-                xVal: gyroX,
-                yVal: gyroY,
-                zVal: gyroZ
-            }
-            gyroX = 'X: ' + gyroX.toFixed(2) + '°/S ';
-            gyroY = 'Y: ' + gyroY.toFixed(2) + '°/S ';
-            gyroZ = 'Z: ' + gyroZ.toFixed(2) + '°/S ';
-            $scope.gyroscope = gyroX + gyroY + gyroZ;
-        } else {
-            $scope.gyroscope = 'X: 0.0°/S Y: 0.0°/S Z: 0.0°/S';
-        }
+
+        gyroscopeUpdate(gyroX, gyroY, gyroZ);
+
 
         var magX = Number(util.movement_MAG_X(hex));
         var magY = Number(util.movement_MAG_Y(hex));
         var magZ = Number(util.movement_MAG_Z(hex));
-        d = new Date();
-        currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-        if (!isNaN(magX) && !isNaN(magY) && !isNaN(magZ)) {
-            magnetoData = {
-                timeNum: dt,
-                date: currDate,
-                xVal: magX,
-                yVal: magY,
-                zVal: magZ
-            }
-            magX = 'X: ' + magX.toFixed(1) + 'uT ';
-            magY = 'Y: ' + magY.toFixed(1) + 'uT ';
-            magZ = 'Z: ' + magZ.toFixed(1) + 'uT ';
-            $scope.magnetometer = magX + magY + magZ;
-        } else {
-            $scope.magnetometer = 'X: 0.0uT Y: 0.0uT Z: 0.0uT';
-        }
 
-        $scope.updateUI();
+        magnetometerUpdate(magX, magY, magZ);
     }
 
     function onLightChange(event) {
         var characteristic = event.target;
 
-        var hex = '';
-        for (var i = 0; i < characteristic.value.byteLength; ++i) {
-            var hexChar = characteristic.value.getUint8(i).toString(16);
-            if (hexChar.length == 1) {
-                hexChar = '0' + hexChar;
-            }
-            hex += hexChar;
-        }
+        var hex = getHexDataFromCharacValue(characteristic.value);
 
         var result = util.calLight(hex);
         if (result !== undefined && !isNaN(result)) {
             $scope.light = result + ' Lux';
         }
 
-        var d = new Date();
-        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-
         if (!isNaN(Number(result))) {
             lightData = {
                 timeNum: dt,
-                date: currDate,
+                date: getCurrentTime(),
                 temp: Number(result)
             }
         }

@@ -4,8 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <!-- Origin Trial Token -->
-    <meta http-equiv="origin-trial" content="Avc8YMwIqejCHjHsP50Ub/Em7KvoZ/LpO+4na54Q/fQYd/0WHGGX8qP6WPFVf7KFEYYVnFT8NcarPKD+YR8tTgoAAABeeyJvcmlnaW4iOiAiaHR0cHM6Ly9ibHVlYXBwaW8uZ2l0aHViLmlvOjQ0MyIsICJmZWF0dXJlIjogIldlYkJsdWV0b290aCIsICJleHBpcnkiOiAxNDczMjY0NjA1fQ==" />
+    <meta http-equiv="origin-trial"
+          content="Avc8YMwIqejCHjHsP50Ub/Em7KvoZ/LpO+4na54Q/fQYd/0WHGGX8qP6WPFVf7KFEYYVnFT8NcarPKD+YR8tTgoAAABeeyJvcmlnaW4iOiAiaHR0cHM6Ly9ibHVlYXBwaW8uZ2l0aHViLmlvOjQ0MyIsICJmZWF0dXJlIjogIldlYkJsdWV0b290aCIsICJleHBpcnkiOiAxNDczMjY0NjA1fQ=="/>
+
     <title>SensorTag</title>
     <link rel="stylesheet"
           href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.min.css">
@@ -43,7 +46,7 @@
                     <label>Ambient Temperature</label>
                     <input type="text" ng-model="ambTemp" ng-disabled="true" style="color:black;">
                 </md-input-container>
-                <nvd3 options="amdTempOptions" data="amdTempData" style="margin-left: -30px;"
+                <nvd3 options="ambTempOptions" data="ambTempData" style="margin-left: -30px;"
                       ng-show="sensortag.connected && graph == 'Line Chart'"></nvd3>
                 <nvd3 options="pieOptions" data="pieAmbTempData" style="margin-left: -30px;"
                       ng-show="sensortag.connected && graph == 'Pie Chart'"></nvd3>
@@ -56,7 +59,7 @@
                     <label>Object Temperature</label>
                     <input type="text" ng-model="objTemp" ng-disabled="true" style="color:black;">
                 </md-input-container>
-                <nvd3 options="objTempOptions" data="objTempdata" style="margin-left: -30px;"
+                <nvd3 options="objTempOptions" data="objTempData" style="margin-left: -30px;"
                       ng-show="sensortag.connected && graph == 'Line Chart'"></nvd3>
                 <nvd3 options="pieOptions" data="pieObjTempData" style="margin-left: -30px;"
                       ng-show="sensortag.connected && graph == 'Pie Chart'"></nvd3>
