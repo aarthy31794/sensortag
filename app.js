@@ -32,6 +32,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     var lightData;
     $scope.timeDispData1 = [];
     $scope.timeDispData2 = [];
+    $scope.timeDispData3 = [];
 
     // ---------- Line Graph Code START -----------
     $scope.lineGraphoptions = {
@@ -66,6 +67,8 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
                         label = $scope.timeDispData1[Math.abs(d)];
                     } else if ($scope.timeDispData2[Math.abs(d)]) {
                         label = $scope.timeDispData2[Math.abs(d)];
+                    } else if ($scope.timeDispData3[Math.abs(d)]) {
+                        label = $scope.timeDispData3[Math.abs(d)];
                     }
                     return label ? label : d3.time.format('%x')(new Date());
                 }
@@ -110,7 +113,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     $scope.humidityData = [{values: [], key: 'Relative Humidity'}];
     $scope.lightData = [{values: [], key: 'Light Sensor'}];
 
-    var dt = 0;
+    var tp = 0, ac = 0, gy = 0, mg = 0, ba = 0, hu = 0, lg = 0;
     setInterval(function () {
         if (ambTempData) {
             if (!isNaN(ambTempData.timeNum) && !isNaN(ambTempData.temp)) {
@@ -462,7 +465,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(accelX) && !isNaN(accelY) && !isNaN(accelZ)) {
             accelData = {
-                timeNum: dt,
+                timeNum: ac,
                 date: getCurrentTime(),
                 xVal: accelX,
                 yVal: accelY,
@@ -477,7 +480,8 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         } else {
             $scope.accelerometer = 'X: 0.0G Y: 0.0G Z: 0.0G';
         }
-
+        ac ++;
+        $scope.timeDispData3.push(getCurrentTime()); //Added this one for display the time on x-axis
         $scope.updateUI();
     }
 
@@ -485,7 +489,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(gyroX) && !isNaN(gyroY) && !isNaN(gyroZ)) {
             gyroData = {
-                timeNum: dt,
+                timeNum: gy,
                 date: getCurrentTime(),
                 xVal: gyroX,
                 yVal: gyroY,
@@ -500,7 +504,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         } else {
             $scope.gyroscope = 'X: 0.0°/S Y: 0.0°/S Z: 0.0°/S';
         }
-
+        gy ++;
         $scope.updateUI();
     }
 
@@ -508,7 +512,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(magX) && !isNaN(magY) && !isNaN(magZ)) {
             magnetoData = {
-                timeNum: dt,
+                timeNum: mg,
                 date: getCurrentTime(),
                 xVal: magX,
                 yVal: magY,
@@ -523,7 +527,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         } else {
             $scope.magnetometer = 'X: 0.0uT Y: 0.0uT Z: 0.0uT';
         }
-
+        mg ++;
         $scope.updateUI();
     }
 
@@ -562,7 +566,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(Number(tempAmb))) {
             ambTempData = {
-                timeNum: dt,
+                timeNum: tp,
                 date: getCurrentTime(),
                 temp: Number(tempAmb)
             }
@@ -570,12 +574,12 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(Number(tempIr))) {
             objTempData = {
-                timeNum: dt,
+                timeNum: tp,
                 date: getCurrentTime(),
                 temp: Number(tempIr)
             }
         }
-
+        tp ++;
         $scope.timeDispData1.push(getCurrentTime()); //Added this one for display the time on x-axis
 
         $scope.updateUI();
@@ -641,11 +645,11 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         if (!isNaN(Number(pressure))) {
             baroData = {
                 date: getCurrentTime(),
-                timeNum: dt,
+                timeNum: ba,
                 temp: Number(pressure)
             }
         }
-        dt++;
+        ba ++;
         $scope.timeDispData2.push(getCurrentTime()); //Added this one for display the time on x-axis
 
         $scope.updateUI();
@@ -664,11 +668,12 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(Number(tempHum))) {
             humidityData = {
-                timeNum: dt,
+                timeNum: hu,
                 date: getCurrentTime(),
                 temp: Number(tempHum)
             }
         }
+        hu ++;
         $scope.updateUI();
     }
 
@@ -709,12 +714,12 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(Number(result))) {
             lightData = {
-                timeNum: dt,
+                timeNum: lg,
                 date: getCurrentTime(),
                 temp: Number(result)
             }
         }
-
+        lg ++;
         $scope.updateUI();
     }
 
