@@ -441,32 +441,12 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         $scope.onConnect();
     }
 
-    /* Common calculation functins for all sensors */
-    function getCurrentTime() {
-        var d = new Date();
-        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
-
-        return currDate;
-    }
-
-    function getHexDataFromCharacValue(value) {
-        var hex = '';
-        for (var i = 0; i < value.byteLength; ++i) {
-            var hexChar = value.getUint8(i).toString(16);
-            if (hexChar.length == 1) {
-                hexChar = '0' + hexChar;
-            }
-            hex += hexChar;
-        }
-        return hex;
-    }
-
     function accelerometerUpdate(accelX, accelY, accelZ) {
 
         if (!isNaN(accelX) && !isNaN(accelY) && !isNaN(accelZ)) {
             accelData = {
                 timeNum: ac,
-                date: getCurrentTime(),
+                date: util.getCurrentTime(),
                 xVal: accelX,
                 yVal: accelY,
                 zVal: accelZ
@@ -481,7 +461,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
             $scope.accelerometer = 'X: 0.0G Y: 0.0G Z: 0.0G';
         }
         ac ++;
-        $scope.timeDispData3.push(getCurrentTime()); //Added this one for display the time on x-axis
+        $scope.timeDispData3.push(util.getCurrentTime()); //Added this one for display the time on x-axis
         $scope.updateUI();
     }
 
@@ -490,7 +470,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         if (!isNaN(gyroX) && !isNaN(gyroY) && !isNaN(gyroZ)) {
             gyroData = {
                 timeNum: gy,
-                date: getCurrentTime(),
+                date: util.getCurrentTime(),
                 xVal: gyroX,
                 yVal: gyroY,
                 zVal: gyroZ
@@ -513,7 +493,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         if (!isNaN(magX) && !isNaN(magY) && !isNaN(magZ)) {
             magnetoData = {
                 timeNum: mg,
-                date: getCurrentTime(),
+                date: util.getCurrentTime(),
                 xVal: magX,
                 yVal: magY,
                 zVal: magZ
@@ -535,7 +515,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onTempChange(event) {
         var characteristic = event.target;
 
-        var hex = getHexDataFromCharacValue(characteristic.value);
+        var hex = util.getHexDataFromCharacValue(characteristic.value);
 
         var tempAmb = util.calcTAmb(hex);
         if (!isNaN(tempAmb) && tempAmb !== 0) {
@@ -567,7 +547,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         if (!isNaN(Number(tempAmb))) {
             ambTempData = {
                 timeNum: tp,
-                date: getCurrentTime(),
+                date: util.getCurrentTime(),
                 temp: Number(tempAmb)
             }
         }
@@ -575,12 +555,12 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         if (!isNaN(Number(tempIr))) {
             objTempData = {
                 timeNum: tp,
-                date: getCurrentTime(),
+                date: util.getCurrentTime(),
                 temp: Number(tempIr)
             }
         }
         tp ++;
-        $scope.timeDispData1.push(getCurrentTime()); //Added this one for display the time on x-axis
+        $scope.timeDispData1.push(util.getCurrentTime()); //Added this one for display the time on x-axis
 
         $scope.updateUI();
     }
@@ -588,7 +568,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onAccelerometerChange(event) {
         var characteristic = event.target;
 
-        var hex = getHexDataFromCharacValue(characteristic.value);
+        var hex = util.getHexDataFromCharacValue(characteristic.value);
 
         var accelX = util.calcAccXValue(hex, $scope.sensortag.sensortag_firmware);
         var accelY = util.calcAccYValue(hex, $scope.sensortag.sensortag_firmware);
@@ -601,7 +581,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onGyroscopeChange(event) {
         var characteristic = event.target;
 
-        var hex = getHexDataFromCharacValue(characteristic.value);
+        var hex = util.getHexDataFromCharacValue(characteristic.value);
 
         var gyroX = util.calcGyrXValue(hex);
         var gyroY = util.calcGyrYValue(hex);
@@ -613,7 +593,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onMagnetometerChange(event) {
         var characteristic = event.target;
 
-        var hex = getHexDataFromCharacValue(characteristic.value);
+        var hex = util.getHexDataFromCharacValue(characteristic.value);
 
         var magX = util.calcMagXValue(hex);
         var magY = util.calcMagYValue(hex);
@@ -625,7 +605,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onBarometerChange(event) {
         var characteristic = event.target;
 
-        var hex = getHexDataFromCharacValue(characteristic.value);
+        var hex = util.getHexDataFromCharacValue(characteristic.value);
 
         var pressure;
         if ($scope.sensortag.sensortag2) {
@@ -644,13 +624,13 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
 
         if (!isNaN(Number(pressure))) {
             baroData = {
-                date: getCurrentTime(),
+                date: util.getCurrentTime(),
                 timeNum: ba,
                 temp: Number(pressure)
             }
         }
         ba ++;
-        $scope.timeDispData2.push(getCurrentTime()); //Added this one for display the time on x-axis
+        $scope.timeDispData2.push(util.getCurrentTime()); //Added this one for display the time on x-axis
 
         $scope.updateUI();
     }
@@ -658,7 +638,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onHumidityChange(event) {
         var characteristic = event.target;
 
-        var hex = getHexDataFromCharacValue(characteristic.value);
+        var hex = util.getHexDataFromCharacValue(characteristic.value);
 
         var tempHum = util.calcPress(hex);
         if (!isNaN(tempHum)) {
@@ -669,7 +649,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         if (!isNaN(Number(tempHum))) {
             humidityData = {
                 timeNum: hu,
-                date: getCurrentTime(),
+                date: util.getCurrentTime(),
                 temp: Number(tempHum)
             }
         }
@@ -680,7 +660,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onMovementChange(event) {
         var characteristic = event.target;
 
-        var hex = getHexDataFromCharacValue(characteristic.value);
+        var hex = util.getHexDataFromCharacValue(characteristic.value);
 
         var accelX = Number(util.movement_ACC_X(hex));
         var accelY = Number(util.movement_ACC_Y(hex));
@@ -705,7 +685,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     function onLightChange(event) {
         var characteristic = event.target;
 
-        var hex = getHexDataFromCharacValue(characteristic.value);
+        var hex = util.getHexDataFromCharacValue(characteristic.value);
 
         var result = util.calLight(hex);
         if (result !== undefined && !isNaN(result)) {
@@ -715,7 +695,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
         if (!isNaN(Number(result))) {
             lightData = {
                 timeNum: lg,
-                date: getCurrentTime(),
+                date: util.getCurrentTime(),
                 temp: Number(result)
             }
         }

@@ -477,5 +477,25 @@ function Util() {
         }
     };
 
+    /* Common calculation functins for all sensors */
+    this.getCurrentTime = function() {
+        var d = new Date();
+        var currDate = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+
+        return currDate;
+    };
+
+    this.getHexDataFromCharacValue = function(value) {
+        var hex = '';
+        for (var i = 0; i < value.byteLength; ++i) {
+            var hexChar = value.getUint8(i).toString(16);
+            if (hexChar.length == 1) {
+                hexChar = '0' + hexChar;
+            }
+            hex += hexChar;
+        }
+        return hex;
+    };
+
     return this;
 }
