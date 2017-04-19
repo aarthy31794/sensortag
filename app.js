@@ -35,7 +35,7 @@ app.controller('mainController', function ($scope, $mdToast, $mdDialog, sensorta
     $scope.timeDispData3 = [];
 
     // Disabling the mouse right click event
-    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.addEventListener('contextmenu', function(event) { event.preventDefault();});
 
     // ---------- Line Graph Code START -----------
     $scope.lineGraphoptions = {
